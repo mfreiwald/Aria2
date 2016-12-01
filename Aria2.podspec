@@ -41,4 +41,5 @@ A Framework written in Swift to use the Aria2 JSON-RPC.
   #s.dependency 'AFNetworking', '~> 2.3'
   s.dependency 'Alamofire', '~> 4.2'
   s.dependency 'Gloss', '~> 1.1'
+  s.dependency 'Starscream', '~> 2.0'
 end

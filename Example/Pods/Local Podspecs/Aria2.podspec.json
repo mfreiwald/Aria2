@@ -1,9 +1,9 @@
 {
   "name": "Aria2",
   "version": "0.1.0",
-  "summary": "A short description of Aria2.",
-  "description": "TODO: Add long description of the pod here.",
-  "homepage": "https://github.com/<GITHUB_USERNAME>/Aria2",
+  "summary": "A Framework written in Swift to use the Aria2 JSON-RPC.",
+  "description": "A Framework written in Swift to use the Aria2 JSON-RPC.",
+  "homepage": "https://github.com/mfreiwald/Aria2",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
@@ -12,11 +12,22 @@
     "Michael Freiwald": "michael.freiwald@xinfo.de"
   },
   "source": {
-    "git": "https://github.com/<GITHUB_USERNAME>/Aria2.git",
+    "git": "https://github.com/mfreiwald/Aria2.git",
     "tag": "0.1.0"
   },
   "platforms": {
     "ios": "8.0"
   },
-  "source_files": "Aria2/Classes/**/*"
+  "source_files": "Aria2/Classes/**/*",
+  "dependencies": {
+    "Alamofire": [
+      "~> 4.2"
+    ],
+    "Gloss": [
+      "~> 1.1"
+    ],
+    "Starscream": [
+      "~> 2.0"
+    ]
+  }
 }
