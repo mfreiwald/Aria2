@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'Aria2_Example' do
+  pod 'Aria2', :path => '../'
+
+  target 'Aria2_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
