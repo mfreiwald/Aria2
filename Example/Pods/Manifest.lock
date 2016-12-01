@@ -1,0 +1,16 @@
+PODS:
+  - Aria2 (0.1.0)
+
+DEPENDENCIES:
+  - Aria2 (from `../`)
+
+EXTERNAL SOURCES:
+  Aria2:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Aria2: b891e8333da56f5d4912de6051026ed8a343c800
+
+PODFILE CHECKSUM: db5dc0a5d6fb050217f0783e527eb4afa66fc6f7
+
+COCOAPODS: 1.2.0.beta.1

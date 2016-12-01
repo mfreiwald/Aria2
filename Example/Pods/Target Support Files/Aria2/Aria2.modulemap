@@ -1,0 +1,6 @@
+framework module Aria2 {
+  umbrella header "Aria2-umbrella.h"
+
+  export *
+  module * { export * }
+}
