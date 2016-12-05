@@ -14,7 +14,7 @@ internal class BaseRequestData : Encodable {
     let method: String
     private(set) var params: [Any]
     
-    internal init(id:String?, method:String, token:String? = nil, params:[Any] = [Any]()) {
+    internal init(id:String? = nil, method:String, token:String? = nil, params:[Any]? = nil) {
         self.id = id ?? UUID().uuidString
         self.method = method
         
@@ -22,7 +22,11 @@ internal class BaseRequestData : Encodable {
         if let _ = token {
             self.params.append("token:\(token!)")
         }
-        self.params.append(params)
+        if let _ = params {
+            for para in params! {
+                self.params.append(para)
+            }
+        }
     }
     
     /**

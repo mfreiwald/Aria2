@@ -14,19 +14,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    var aria:Aria2?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
         
-        let aria = Aria2.connect(url: "url", token: "token")
-        aria.getGlobalStat { (data) in
-            guard let stats = data else {
+        
+        
+        self.aria = Aria2.connect(url: "server", token: "token")
+        
+        if let websocket = self.aria as? Aria2WebSocket {
+            websocket.autoReconnect = true
+            websocket.onDownloadStart = { gid in
+                print("Download \(gid) start")
+            }
+            websocket.onDownloadComplete = { gid in
+                print("Download \(gid) complete")
+            }
+        }
+        
+        
+        
+        
+        /*
+        self.aria!.getGlobalStat { (data) in
+            guard let stats = data as? GlobalStat else {
                 return
             }
             print("Downloadspeed: \(stats.downloadSpeed)")
         }
-        
+        */
         
         return true
     }
