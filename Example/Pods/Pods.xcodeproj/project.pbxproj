@@ -24,6 +24,7 @@
 		4A4D1BF29C206DCB98E7ACDD04A24455 /* SSLSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0823A112A50D8E2B744AE6EE176D2DAE /* SSLSecurity.swift */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4C72F7B21DF18B000056D029 /* GID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C72F7B11DF18B000056D029 /* GID.swift */; };
 		4C72F7B41DF18CE60056D029 /* NotificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C72F7B31DF18CE60056D029 /* NotificationResponse.swift */; };
+		4C8A47D91DF856620095D013 /* MultiCallRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8A47D71DF855F80095D013 /* MultiCallRequest.swift */; };
 		541A2F6B95376533A55F805179D04C61 /* ExtensionDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15C814AC0FF7DB011D8836EF4562FA /* ExtensionDictionary.swift */; };
 		58E9950BDD46522843AD88F2AAFFC203 /* Pods-Aria2_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F69E42A05DD737DE28176013AD6C361 /* Pods-Aria2_Example-dummy.m */; };
 		5D16E22E6689A78CB4FB938498EAD01C /* Aria2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7304981890230367F6E789B173BE6926 /* Aria2.swift */; };
@@ -149,6 +150,7 @@
 		4C1385C078F07CA97F50C07DE2C01423 /* Pods-Aria2_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Aria2_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		4C72F7B11DF18B000056D029 /* GID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GID.swift; sourceTree = "<group>"; };
 		4C72F7B31DF18CE60056D029 /* NotificationResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationResponse.swift; sourceTree = "<group>"; };
+		4C8A47D71DF855F80095D013 /* MultiCallRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiCallRequest.swift; sourceTree = "<group>"; };
 		4D41A406C9AA82F6D96035FB3B2D0EF4 /* Gloss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Gloss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EEC8B7E30900B819B7F3EE077BCB8A5 /* ParameterEncoding.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ParameterEncoding.swift; path = Source/ParameterEncoding.swift; sourceTree = "<group>"; };
 		5014F6918F9AD0ADA776A90360F5E555 /* Starscream.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Starscream.modulemap; sourceTree = "<group>"; };
@@ -506,6 +508,7 @@
 			isa = PBXGroup;
 			children = (
 				4C72F7B31DF18CE60056D029 /* NotificationResponse.swift */,
+				4C8A47D71DF855F80095D013 /* MultiCallRequest.swift */,
 				D80B24C4BE5F05ED6E7FC8809FAE13FE /* BaseRequestData.swift */,
 				BA697C477408E04CC37CC49D4021CFC2 /* BaseResponseData.swift */,
 				C28B045F835AE3801CD92B91EC2F9512 /* GlobalStat.swift */,
@@ -783,6 +786,7 @@
 				4C72F7B21DF18B000056D029 /* GID.swift in Sources */,
 				878C650524450B654BB0D7994C27AA14 /* Aria2HTTP.swift in Sources */,
 				62248E604D82463DD078910D7637BE2B /* Aria2WebSocket.swift in Sources */,
+				4C8A47D91DF856620095D013 /* MultiCallRequest.swift in Sources */,
 				4C72F7B41DF18CE60056D029 /* NotificationResponse.swift in Sources */,
 				1E4214CCFAEC8BA148431F9A966A1B84 /* BaseRequestData.swift in Sources */,
 				31D19C831A5BFBE9582EDEA18D77B4EF /* BaseResponseData.swift in Sources */,

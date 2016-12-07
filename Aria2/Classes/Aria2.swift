@@ -211,8 +211,9 @@ public class Aria2 {
     }
     
     // TODO
-    public func multicall(_ completion: @escaping ResponseCompletion<BaseResponseData>) {
-        
+    public func multicall(params:[String : [Any]], _ completion: @escaping ResponseCompletion<BaseResponseData>) {
+        let request = MultiCallRequest(params: params)
+        self.writeToServer(request: request, completion: completion)
     }
     
     // TODO

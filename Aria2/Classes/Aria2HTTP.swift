@@ -17,7 +17,13 @@ public class Aria2HTTP : Aria2 {
     }
     
     internal override func writeToServer<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion<T>) {
+        
+        print(request.toJSON()!)
+        
         Alamofire.request(self.serverURL, method: .post, parameters: request.toJSON()!, encoding: JSONEncoding.default).responseJSON(completionHandler: { (response) in
+
+            print(response)
+            
             if let json = response.result.value as? JSON {
                 super.matchResponse(json: json, completion: completion)
             } else {

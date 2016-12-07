@@ -35,6 +35,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         
+        var calls = [String:[Any]]()
+        // token fehlt
+        calls["aria2.addUri"] = ["http://ipv4.download.thinkbroadband.com/20MB.zip"]
+        //calls["aria2.getGlobalStat"] = [""]
+        self.aria!.multicall(params: calls, { (response) in
+            print(response?.id)
+        })
+        
+        
         
         
         /*

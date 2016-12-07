@@ -64,6 +64,7 @@ public class Aria2WebSocket : Aria2, WebSocketDelegate, WebSocketPongDelegate {
     }
     
     public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
+        print(text)
         do {
             let jsonObj = try JSONSerialization.jsonObject(with: text.data(using: String.Encoding.utf8)!)
             if let json = jsonObj as? JSON {
@@ -91,6 +92,7 @@ public class Aria2WebSocket : Aria2, WebSocketDelegate, WebSocketPongDelegate {
     // MARK: - Private functions
     
     internal override func writeToServer<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion<T>) {
+        print(request.toJSON()!)
         self.completionsById[request.id] = completion
         connect {
             do {
