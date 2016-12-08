@@ -11,6 +11,23 @@ import Gloss
 
 public typealias ResponseCompletion<T:BaseResponseData> = (T?) -> Void
 
+public typealias ResponseCompletion2<T:BaseResponseData> = (Result<T, Any>) -> Void
+
+public enum Result<T:BaseResponseData, Error> {
+    case Success(T)
+    case Failure(Error?)
+    
+    /// Constructs a success wrapping a `value`.
+    public init(value: T) {
+        self = .Success(value)
+    }
+    
+    /// Constructs a failure wrapping an `error`.
+    public init(error: Error?) {
+        self = .Failure(error)
+    }
+}
+
 public class Aria2 {
     private static let REQUEST_PATH: String = "/jsonrpc"
 
@@ -38,12 +55,17 @@ public class Aria2 {
     internal var serverURL: URL
     internal var token: String?
     
+    private var requests:[String : (BaseRequestData,Any)] = [String:(BaseRequestData,Any)]()
+    
+    private var completions:[String:Any] = [String:Any]()
+    
     internal init(serverURL:URL, token:String?) {
         self.serverURL = serverURL
         self.token = token
     }
-    
+
     internal func writeToServer<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion<T>) {}
+    internal func writeToServer2<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion2<T>) {}
 
     internal func matchResponse<T:BaseResponseData>(json: JSON, completion: @escaping ResponseCompletion<T>) {
         if let stats = T(json: json) {
@@ -53,12 +75,16 @@ public class Aria2 {
             print("matchResponse nil")
             completion(nil)
         }
-        /*else if let gid = GID(json: json) {
-            completion(gid)
+    }
+    
+    internal func matchResponse2<T:BaseResponseData>(json: JSON, completion: @escaping ResponseCompletion2<T>) {
+        if let stats = T(json: json) {
+            print("matchResponse \(stats)")
+            completion(Result.Success(stats))
         } else {
-            completion(BaseResponseData(json: json))
+            print("matchResponse nil")
+            completion(Result.Failure(nil))
         }
-        */
     }
     
     private func requestWithGID<T:BaseResponseData>(_ gid:String, method:String, completion: @escaping ResponseCompletion<T>) {
@@ -66,15 +92,43 @@ public class Aria2 {
         self.writeToServer(request: request, completion: completion)
     }
     
-    // MARK: - Aria2 Functions
-    
-    public func addUri(_ uri:String, _ completion: @escaping ResponseCompletion<GID>) {
-        addUri([uri], completion)
+    public func response() {
+        
+        
+        for (id, (request, completion)) in self.requests {
+            
+            if let complete = completion as? ResponseCompletion2<GID> {
+                self.writeToServer2(request: request, completion: complete)
+            }
+            
+        }
+        
+        /*
+        print("response")
+        print(self.completions["abc"])
+        if let completion = self.completions["abc"] as? ResponseCompletion2<GID> {
+            if let gid:GID = GID(json: ["result":"abc"]) {
+                completion(Result.Success(gid))
+            } else {
+                print("gid not created but found")
+            }
+        } else {
+            print("completion not found")
+        }
+        */
+        
     }
     
-    public func addUri(_ uris:[String], _ completion: @escaping ResponseCompletion<GID>) {
+    // MARK: - Aria2 Functions
+    
+    public func addUri(_ uri:String, _ completion: @escaping ResponseCompletion2<GID>) -> Aria2 {
+        return addUri([uri], completion)
+    }
+    
+    public func addUri(_ uris:[String], _ completion: @escaping ResponseCompletion2<GID>) -> Aria2 {
         let request = BaseRequestData(method: "aria2.addUri", token: self.token, params: [uris])
-        self.writeToServer(request: request, completion: completion)
+        self.requests[request.id] = (request, completion)
+        return self
     }
     
     public func remove(_ gid:String, _ completion: @escaping ResponseCompletion<GID>) {
@@ -212,9 +266,13 @@ public class Aria2 {
     
     // TODO
     public func multicall(params:[String : [Any]], _ completion: @escaping ResponseCompletion<BaseResponseData>) {
-        let request = MultiCallRequest(params: params)
-        self.writeToServer(request: request, completion: completion)
+
     }
+    
+    public func multicall(uri1:String, uri2:String, _ completion: @escaping ResponseCompletion<BaseResponseData>) {
+        
+    }
+
     
     // TODO
     public func listMethods(_ completion: @escaping ResponseCompletion<BaseResponseData>) {

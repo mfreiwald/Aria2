@@ -18,9 +18,16 @@ public class Aria2HTTP : Aria2 {
     
     internal override func writeToServer<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion<T>) {
         
-        print(request.toJSON()!)
+        print("Aria2HTTP:writeToServer:requests:completion")
         
-        Alamofire.request(self.serverURL, method: .post, parameters: request.toJSON()!, encoding: JSONEncoding.default).responseJSON(completionHandler: { (response) in
+        var urlRequest = URLRequest(url: self.serverURL)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let data = try! JSONSerialization.data(withJSONObject: request.toJSON()!)
+        urlRequest.httpBody = data
+
+        Alamofire.request(urlRequest).responseJSON { response in
 
             print(response)
             
@@ -29,6 +36,29 @@ public class Aria2HTTP : Aria2 {
             } else {
                 completion(nil)
             }
-        })
+        }
+        
+    }
+    
+    internal override func writeToServer2<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion2<T>) {
+        print("Aria2HTTP:writeToServer2:requests:completion")
+        
+        var urlRequest = URLRequest(url: self.serverURL)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let data = try! JSONSerialization.data(withJSONObject: request.toJSON()!)
+        urlRequest.httpBody = data
+        
+        Alamofire.request(urlRequest).responseJSON { response in
+            
+            print(response)
+            
+            if let json = response.result.value as? JSON {
+                super.matchResponse2(json: json, completion: completion)
+            } else {
+                completion(Result.Failure(nil))
+            }
+        }
     }
 }

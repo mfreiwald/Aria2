@@ -22,8 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         
-        self.aria = Aria2.connect(url: "server", token: "token")
+        self.aria = Aria2.connect(url: "", token: "token")
         
+        /*
         if let websocket = self.aria as? Aria2WebSocket {
             websocket.autoReconnect = true
             websocket.onDownloadStart = { gid in
@@ -33,8 +34,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("Download \(gid) complete")
             }
         }
+        */
         
         
+        let _ = self.aria!.addUri("http://ipv4.download.thinkbroadband.com/20MB.zip", { result in
+            print("result of adduri \(result)")
+            switch result {
+            case .Success(let gid): print("success \(gid.gid)")
+            case .Failure(let error): print("failure")
+            }
+        }).response()
+        
+        /*
+        self.aria!.addUri("http://ipv4.download.thinkbroadband.com/20MB.zip") { (gid) in
+            print(gid?.gid)
+        }.addUri("http://ipv4.download.thinkbroadband.com/10MB.zip") { (gid) in
+            print(gid?.gid)
+        }.response()
+        */
+        
+        /*
+        self.aria!.multicall(uri1: "http://ipv4.download.thinkbroadband.com/20MB.zip", uri2: "http://ipv4.download.thinkbroadband.com/10MB.zip") { (response) in
+            print(response?.id)
+        }
+        */
+        /*
         var calls = [String:[Any]]()
         // token fehlt
         calls["aria2.addUri"] = ["http://ipv4.download.thinkbroadband.com/20MB.zip"]
@@ -42,7 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.aria!.multicall(params: calls, { (response) in
             print(response?.id)
         })
-        
+        */
         
         
         

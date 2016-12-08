@@ -23,6 +23,7 @@ class ViewController: UIViewController {
         
     }
 
+    /*
     @IBAction func update(_ sender: Any) {
         app.aria?.getGlobalStat { (response) in
             print(response)
@@ -58,5 +59,6 @@ class ViewController: UIViewController {
             })
         }
     }
+    */
 }
 

@@ -92,8 +92,9 @@ public class Aria2WebSocket : Aria2, WebSocketDelegate, WebSocketPongDelegate {
     // MARK: - Private functions
     
     internal override func writeToServer<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion<T>) {
-        print(request.toJSON()!)
+        
         self.completionsById[request.id] = completion
+        
         connect {
             do {
                 let data = try JSONSerialization.data(withJSONObject: request.toJSON()!)
