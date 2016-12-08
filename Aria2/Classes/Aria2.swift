@@ -11,9 +11,14 @@ import Gloss
 
 public typealias ResponseCompletion<T:BaseResponseData> = (T?) -> Void
 
-public typealias ResponseCompletion2<T:BaseResponseData> = (Result<T, Any>) -> Void
+public typealias ResponseCompletion2<T:BaseResponseData> = (Result<T>) -> Void
 
-public enum Result<T:BaseResponseData, Error> {
+public enum RPCCall {
+    case addUri([String], ResponseCompletion2<GID>)
+    case getGlobalStat(ResponseCompletion2<GlobalStat>)
+}
+
+public enum Result<T:BaseResponseData> {
     case Success(T)
     case Failure(Error?)
     
@@ -29,6 +34,13 @@ public enum Result<T:BaseResponseData, Error> {
 }
 
 public class Aria2 {
+    public func test(method:RPCCall) {
+        switch(method) {
+        case let .addUri(uris, completion): self.addUri(uris, completion).response()
+        default: return
+        }
+    }
+    
     private static let REQUEST_PATH: String = "/jsonrpc"
 
     public class func connect(url: String, token: String? = nil) -> Aria2 {
@@ -102,6 +114,8 @@ public class Aria2 {
             }
             
         }
+        
+        self.requests.removeAll()
         
         /*
         print("response")

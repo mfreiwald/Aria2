@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         
-        self.aria = Aria2.connect(url: "", token: "token")
+        self.aria = Aria2.connect(url: "", token: "")
         
         /*
         if let websocket = self.aria as? Aria2WebSocket {
@@ -35,15 +35,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         */
+        let add = RPCCall.addUri(["http://ipv4.download.thinkbroadband.com/20MB.zip"], {(result) in
+            switch(result) {
+            case let .Success(gid): print("success " + gid.gid)
+            case let .Failure(error): print("failure")
+            }
+        })
+        self.aria!.test(method: add)
         
-        
-        let _ = self.aria!.addUri("http://ipv4.download.thinkbroadband.com/20MB.zip", { result in
-            print("result of adduri \(result)")
+        /*
+        self.aria!.addUri("http://ipv4.download.thinkbroadband.com/20MB.zip", { result in
             switch result {
-            case .Success(let gid): print("success \(gid.gid)")
-            case .Failure(let error): print("failure")
+            case let .Success(gid): print("success \(gid.gid)")
+            case let .Failure(error): print("failure")
+            }
+        }).addUri("http://ipv4.download.thinkbroadband.com/10MB.zip", { (result) in
+            switch result {
+            case let .Success(gid): print("success \(gid.gid)")
+            case let .Failure(error): print("failure")
             }
         }).response()
+        */
         
         /*
         self.aria!.addUri("http://ipv4.download.thinkbroadband.com/20MB.zip") { (gid) in
