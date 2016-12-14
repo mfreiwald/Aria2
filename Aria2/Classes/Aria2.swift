@@ -14,8 +14,16 @@ public typealias ResponseCompletion<T:BaseResponseData> = (T?) -> Void
 public typealias ResponseCompletion2<T:BaseResponseData> = (Result<T>) -> Void
 
 public enum RPCCall {
-    case addUri([String], ResponseCompletion2<GID>)
-    case getGlobalStat(ResponseCompletion2<GlobalStat>)
+    case addUri         ([String],  ResponseCompletion2<GID>)
+    case getGlobalStat  (           ResponseCompletion2<GlobalStat>)
+    
+    
+    var methodName:String {
+        switch self {
+        case .addUri:           return "aria2.addUri"
+        case .getGlobalStat:    return "aria2.getGlobalStat"
+        }
+    }
 }
 
 public enum Result<T:BaseResponseData> {
@@ -34,12 +42,6 @@ public enum Result<T:BaseResponseData> {
 }
 
 public class Aria2 {
-    public func test(method:RPCCall) {
-        switch(method) {
-        case let .addUri(uris, completion): self.addUri(uris, completion).response()
-        default: return
-        }
-    }
     
     private static let REQUEST_PATH: String = "/jsonrpc"
 
@@ -64,10 +66,12 @@ public class Aria2 {
         return Aria2HTTP(serverURL: serverURL, token: token)
     }
     
+    
+    
+    
     internal var serverURL: URL
     internal var token: String?
     
-    private var requests:[String : (BaseRequestData,Any)] = [String:(BaseRequestData,Any)]()
     
     private var completions:[String:Any] = [String:Any]()
     
@@ -76,34 +80,63 @@ public class Aria2 {
         self.token = token
     }
 
-    internal func writeToServer<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion<T>) {}
-    internal func writeToServer2<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion2<T>) {}
 
-    internal func matchResponse<T:BaseResponseData>(json: JSON, completion: @escaping ResponseCompletion<T>) {
-        if let stats = T(json: json) {
-            print("matchResponse \(stats)")
-            completion(stats)
-        } else {
-            print("matchResponse nil")
-            completion(nil)
-        }
+    internal func sendToServer(json: Data, completion: @escaping ([JSON]) -> Bool) {}
+    
+    public func call(method:RPCCall) {
+        self.call(methods: [method])
     }
     
-    internal func matchResponse2<T:BaseResponseData>(json: JSON, completion: @escaping ResponseCompletion2<T>) {
-        if let stats = T(json: json) {
-            print("matchResponse \(stats)")
-            completion(Result.Success(stats))
+    public func call(methods:[RPCCall]) {
+        var requests = [BaseRequestData]()
+        
+        for call in methods {
+            switch call {
+            case let .addUri        (uris, completion):     requests.append(self.createRequest(methodName: call.methodName, params: [uris]  , completion: completion))
+            case let .getGlobalStat (completion):           requests.append(self.createRequest(methodName: call.methodName, params: nil     , completion: completion))
+            }
+        }
+        
+        let jsonData = try! JSONSerialization.data(withJSONObject: requests.toJSONArray()!)
+        self.sendToServer(json: jsonData, completion: sendToServerCompletion)
+    }
+    
+    
+    private func createRequest<T:BaseResponseData>(methodName: String, params: [Any]? = nil, completion: @escaping ResponseCompletion2<T>) -> BaseRequestData {
+        let request = BaseRequestData(id: nil, method: methodName, token: self.token, params: params)
+        self.completions[request.id] = completion
+        return request
+    }
+    
+    private func sendToServerCompletion(jsonArray: [JSON]) -> Bool {
+        var foundCompletion = false
+        for json in jsonArray {
+            if let response = BaseResponseData(json: json) {
+                if let completion = self.completions[response.id] as? ResponseCompletion2<GID> { self.completeResponse(json: json, completion: completion); foundCompletion = true }
+                else if let completion = self.completions[response.id] as? ResponseCompletion2<GlobalStat> { self.completeResponse(json: json, completion: completion); foundCompletion = true }
+                //else if let completion = self.completions[response.id] as? ResponseCompletion2<GlobalStat> { self.completeResponse(json: json, completion: completion) }
+            }
+        }
+        return foundCompletion
+    }
+    
+    
+    private func completeResponse<T:BaseResponseData>(json: JSON, completion: @escaping ResponseCompletion2<T>) {
+        if let data = T(json: json) {
+            self.completions.removeValue(forKey: data.id)
+            completion(Result.Success(data))
         } else {
-            print("matchResponse nil")
             completion(Result.Failure(nil))
         }
     }
     
+    /*
     private func requestWithGID<T:BaseResponseData>(_ gid:String, method:String, completion: @escaping ResponseCompletion<T>) {
         let request = BaseRequestData(method: method, token: self.token, params: [gid])
         self.writeToServer(request: request, completion: completion)
     }
-    
+    */
+    /*
     public func response() {
         
         
@@ -111,11 +144,12 @@ public class Aria2 {
             
             if let complete = completion as? ResponseCompletion2<GID> {
                 self.writeToServer2(request: request, completion: complete)
+            } else if let complete = completion as? ResponseCompletion2<GlobalStat> {
+                self.writeToServer2(request: request, completion: complete)
             }
-            
+            self.requests.removeValue(forKey: id)
         }
         
-        self.requests.removeAll()
         
         /*
         print("response")
@@ -132,9 +166,10 @@ public class Aria2 {
         */
         
     }
+    */
     
     // MARK: - Aria2 Functions
-    
+    /*
     public func addUri(_ uri:String, _ completion: @escaping ResponseCompletion2<GID>) -> Aria2 {
         return addUri([uri], completion)
     }
@@ -239,9 +274,12 @@ public class Aria2 {
         self.writeToServer(request: request, completion: completion)
     }
     
-    public func getGlobalStat(_ completion: @escaping ResponseCompletion<GlobalStat>) {
+    public func getGlobalStat(_ completion: @escaping ResponseCompletion2<GlobalStat>) -> Aria2 {
+        print("getGlobalStat")
         let request = BaseRequestData(method: "aria2.getGlobalStat", token: self.token)
-        self.writeToServer(request: request, completion: completion)
+        //self.writeToServer2(request: request, completion: completion)
+        self.requests[request.id] = (request, completion)
+        return self
     }
     
     public func purgeDownloadResult(_ completion: @escaping ResponseCompletion<BaseResponseData>) {
@@ -297,4 +335,5 @@ public class Aria2 {
     public func listNotifications(_ completion: @escaping ResponseCompletion<BaseResponseData>) {
         
     }
+    */
 }

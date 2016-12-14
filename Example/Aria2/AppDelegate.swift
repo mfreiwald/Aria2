@@ -35,13 +35,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         */
+        
         let add = RPCCall.addUri(["http://ipv4.download.thinkbroadband.com/20MB.zip"], {(result) in
             switch(result) {
             case let .Success(gid): print("success " + gid.gid)
-            case let .Failure(error): print("failure")
+            case let .Failure(_): print("failure")
             }
         })
-        self.aria!.test(method: add)
+ 
+        let stats = RPCCall.getGlobalStat { (result) in
+            switch(result) {
+            case let .Success(global): print("success \(global.numStoppedTotal)")
+            case let .Failure(_): print("failure")
+            }
+        }
+        
+        self.aria!.call(methods: [add, stats])
+
         
         /*
         self.aria!.addUri("http://ipv4.download.thinkbroadband.com/20MB.zip", { result in

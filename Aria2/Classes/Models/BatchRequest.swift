@@ -9,6 +9,7 @@
 import Foundation
 import Gloss
 
+/*
 internal class BatchRequest : Encodable {
     
     var requests:[BaseRequestData]
@@ -28,3 +29,4 @@ internal class BatchRequest : Encodable {
             ])
     }
 }
+*/

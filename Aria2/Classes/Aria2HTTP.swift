@@ -16,6 +16,7 @@ public class Aria2HTTP : Aria2 {
         super.init(serverURL: serverURL, token: token)
     }
     
+    /*
     internal override func writeToServer<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion<T>) {
         
         print("Aria2HTTP:writeToServer:requests:completion")
@@ -39,7 +40,8 @@ public class Aria2HTTP : Aria2 {
         }
         
     }
-    
+    */
+    /*
     internal override func writeToServer2<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion2<T>) {
         print("Aria2HTTP:writeToServer2:requests:completion")
         
@@ -60,5 +62,25 @@ public class Aria2HTTP : Aria2 {
                 completion(Result.Failure(nil))
             }
         }
+    }
+    */
+    
+    internal override func sendToServer(json: Data, completion: @escaping ([JSON]) -> Bool) {
+        var urlRequest = URLRequest(url: self.serverURL)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.httpBody = json
+
+        Alamofire.request(urlRequest).responseJSON { response in
+            
+            print(response)
+            if let jsonArray = response.result.value as? [JSON] {
+                completion(jsonArray)
+            } else {
+                completion([JSON]())
+            }
+            
+        }
+
     }
 }

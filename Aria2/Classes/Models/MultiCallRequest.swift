@@ -8,7 +8,7 @@
 
 import Foundation
 import Gloss
-
+/*
 internal class MultiCallRequest : BaseRequestData {
 
     init(id:String? = nil, token:String? = nil, params:[String:[Any]]) {
@@ -48,3 +48,4 @@ internal struct MultiCallParameter : Encodable {
             ])
     }
 }
+*/

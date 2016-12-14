@@ -11,7 +11,7 @@ import Starscream
 import Gloss
 
 public typealias NotificationCompletion = ((_ gid:String) -> ())?
-
+internal typealias WebsocketCompletion = ([JSON]) -> Bool
 public class Aria2WebSocket : Aria2, WebSocketDelegate, WebSocketPongDelegate {
     
     public var onDownloadStart:NotificationCompletion
@@ -25,7 +25,9 @@ public class Aria2WebSocket : Aria2, WebSocketDelegate, WebSocketPongDelegate {
     
     private let socket:WebSocket
     private var connectCompletion:(()->())?
-    private var completionsById:[String : Any] = [String : Any]()
+    
+    private var completions:[WebsocketCompletion] = [WebsocketCompletion]()
+    //private var completionsById:[String : Any] = [String : Any]()
     
     public override init(serverURL: URL, token: String? = nil) {
         socket = WebSocket(url: serverURL)
@@ -64,21 +66,19 @@ public class Aria2WebSocket : Aria2, WebSocketDelegate, WebSocketPongDelegate {
     }
     
     public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
+        
         print(text)
-        do {
-            let jsonObj = try JSONSerialization.jsonObject(with: text.data(using: String.Encoding.utf8)!)
-            if let json = jsonObj as? JSON {
-                if let baseResponse = BaseResponseData(json: json) {
-                    completeResponse(baseResponse, with: json)
-                } else if let notification = NotificationResponse(json: json) {
-                    completeNotification(notification)
-                } else {
-                    print("JSON Read Error")
+        let jsonObj = try! JSONSerialization.jsonObject(with: text.data(using: String.Encoding.utf8)!)
+        if let jsonArray = jsonObj as? [JSON] {
+            for i in (0 ..< self.completions.count).reversed() {            //for completion in self.completions {
+                let completion = self.completions[i]
+                if(completion(jsonArray)) {
+                    // remove from array
+                    let _ = self.completions.remove(at: i)
                 }
             }
-        } catch {
-            print(error)
         }
+
     }
     
     public func websocketDidReceiveData(socket: WebSocket, data: Data) {
@@ -91,6 +91,15 @@ public class Aria2WebSocket : Aria2, WebSocketDelegate, WebSocketPongDelegate {
     
     // MARK: - Private functions
     
+    override func sendToServer(json: Data, completion: @escaping WebsocketCompletion) {
+        // problem wenn methode öfter aufgerufen wird!!
+        self.completions.append(completion)
+        connect {
+            self.socket.write(data: json)
+        }
+    }
+    
+    /*
     internal override func writeToServer<T:BaseResponseData>(request: BaseRequestData, completion: @escaping ResponseCompletion<T>) {
         
         self.completionsById[request.id] = completion
@@ -117,7 +126,7 @@ public class Aria2WebSocket : Aria2, WebSocketDelegate, WebSocketPongDelegate {
             print("completeResponse = nil...")
         }
     }
-    
+    */
     private func completeNotification(_ notification:NotificationResponse) {
         switch(notification.notification) {
         case .onDownloadStart: self.onDownloadStart?(notification.gid)

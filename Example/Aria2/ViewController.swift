@@ -23,25 +23,27 @@ class ViewController: UIViewController {
         
     }
 
-    /*
+    
     @IBAction func update(_ sender: Any) {
-        app.aria?.getGlobalStat { (response) in
-            print(response)
-            guard let stats = response else {
-                return
+        let stats = RPCCall.getGlobalStat { (result) in
+            switch(result) {
+            case let .Success(stats):
+                var str = ""
+                str += "Download Speed: \(stats.downloadSpeed)\n"
+                str += "Num Active: \(stats.numActive)\n"
+                str += "Num Stopped: \(stats.numStopped)\n"
+                str += "Num Stopped Total: \(stats.numStoppedTotal)\n"
+                str += "Num Waiting: \(stats.numWaiting)\n"
+                str += "Upload Speed: \(stats.uploadSpeed)"
+                
+                self.label.text = str
+            case let .Failure(_): print("failure")
             }
-            var str = ""
-            str += "Download Speed: \(stats.downloadSpeed)\n"
-            str += "Num Active: \(stats.numActive)\n"
-            str += "Num Stopped: \(stats.numStopped)\n"
-            str += "Num Stopped Total: \(stats.numStoppedTotal)\n"
-            str += "Num Waiting: \(stats.numWaiting)\n"
-            str += "Upload Speed: \(stats.uploadSpeed)"
-            
-            self.label.text = str
         }
-    }
+        self.app.aria!.call(method: stats)
 
+    }
+    /*
     @IBAction func add(_ sender: Any) {
         self.app.aria!.addUri("http://ipv4.download.thinkbroadband.com/50MB.zip", { (response) in
             guard let gid = response else {
