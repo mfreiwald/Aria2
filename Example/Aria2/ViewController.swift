@@ -37,7 +37,7 @@ class ViewController: UIViewController {
                 str += "Upload Speed: \(stats.uploadSpeed)"
                 
                 self.label.text = str
-            case let .Failure(_): print("failure")
+            case .Failure(_): print("failure")
             }
         }
         self.app.aria!.call(method: stats)
