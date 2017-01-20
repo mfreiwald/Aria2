@@ -22,7 +22,7 @@ pod "Aria2"
 
 ## Author
 
-Michael Freiwald, michael.freiwald@xinfo.de
+Michael Freiwald, m.freiwald@icloud.com
 
 ## License
 
